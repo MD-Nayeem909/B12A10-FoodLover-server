@@ -11,9 +11,6 @@ import userRouter from "./router/userRoutes.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
-// const corsOptions = {
-//   origin: ["*","https://b12-a10-food-lover-client.vercel.app"],
-// };
 
 app.use(
   cors({
@@ -24,16 +21,16 @@ app.use(
 );
 
 // middleware
-// app.use(cors(corsOptions));
 app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use("/", (req, res) => {
-  res.send("Welcome to FoodLovers API");
-});
 app.use("/auth", router);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/user", userRouter);
+
+app.use("/", (req, res) => {
+  res.send("Welcome to FoodLovers API");
+});
 
 connectDB(async () => {
   app.listen(port, () => {
