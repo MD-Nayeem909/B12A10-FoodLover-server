@@ -28,7 +28,9 @@ app.use(
 app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
+app.use("/", (req, res) => {
+  res.send("Welcome to FoodLovers API");
+});
 app.use("/auth", router);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/user", userRouter);
