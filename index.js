@@ -11,14 +11,20 @@ import userRouter from "./router/userRoutes.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
-const corsOptions = {
-  origin: ["*","https://b12-a10-food-lover-client.vercel.app"],
-};
+// const corsOptions = {
+//   origin: ["*","https://b12-a10-food-lover-client.vercel.app"],
+// };
 
-
+app.use(
+  cors({
+    origin: "https://b12-a10-food-lover-client.vercel.app", // Allow only your client's origin
+    methods: ["GET", "POST", "PUT", "DELETE"], // Specify allowed methods
+    allowedHeaders: ["Content-Type", "Authorization"], // Specify allowed headers
+  })
+);
 
 // middleware
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
