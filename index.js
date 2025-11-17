@@ -11,9 +11,14 @@ import userRouter from "./router/userRoutes.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
+const corsOptions = {
+  origin: ["*","https://b12-a10-food-lover-client.vercel.app"],
+};
+
+
 
 // middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
