@@ -14,7 +14,7 @@ const port = process.env.PORT || 3000;
 
 app.use(
   cors({
-    origin: "https://b12-a10-food-lover-client.vercel.app", // Allow only your client's origin
+    origin: ["https://b12-a10-food-lover-client.vercel.app", "http://localhost:5173"], // Allow only your client's origin
     methods: ["GET", "POST", "PUT", "DELETE"], // Specify allowed methods
     allowedHeaders: ["Content-Type", "Authorization"], // Specify allowed headers
   })
