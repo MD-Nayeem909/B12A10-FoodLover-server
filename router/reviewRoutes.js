@@ -61,8 +61,6 @@ reviewRoutes.get("/", async (req, res) => {
       ])
       .toArray(); // IMPORTANT
 
-    console.log(reviewData);
-
     res.status(200).send({
       data: reviewData,
       success: true,
@@ -74,6 +72,47 @@ reviewRoutes.get("/", async (req, res) => {
       data: [],
       success: false,
       message: "Reviews data fetch error",
+    });
+  }
+});
+
+reviewRoutes.get("/search", async (req, res) => {
+  try {
+    const search = req.query.search?.trim();
+    
+    if (!search) {
+      return res.status(400).send({
+        success: false,
+        message: "Search query is required",
+        data: [],
+      });
+    }
+
+    const collection = db.collection("reviews");
+    
+    // const reviews = await collection
+    //   .find({ $text: { $search: search } }, { score: { $meta: "textScore" } })
+    //   .sort({ score: { $meta: "textScore" } })
+    //   .toArray();
+
+    const reviews = await collection.find({
+      $or: [
+        { foodName: { $regex: search, $options: "i" } },
+        { tags: { $regex: search, $options: "i" } },
+      ],
+    }).toArray();
+
+    res.status(200).send({
+      success: true,
+      message: "Search results fetched",
+      data: reviews,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({
+      success: false,
+      message: "Search failed",
+      data: [],
     });
   }
 });
@@ -140,8 +179,6 @@ reviewRoutes.post("/", verifyToken, authUser, async (req, res) => {
     createdAt: new Date(),
     updatedAt: new Date(),
   };
-
-  console.log(reviewData);
 
   try {
     const collection = await db.collection("reviews");
