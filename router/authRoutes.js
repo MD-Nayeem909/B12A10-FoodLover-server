@@ -14,6 +14,16 @@ authRouter.post("/signup", async (req, res) => {
     });
   }
   try {
+    const collection = await db.collection("users");
+    const existingUser = await collection.findOne({ email: req.body.email });
+    if (existingUser) {
+      return res.status(400).send({
+        data: {},
+        success: false,
+        message: "Email already exists",
+      });
+    }
+
     const user = {
       ...req.body,
       password: passwordHash(req.body.password),
@@ -22,7 +32,6 @@ authRouter.post("/signup", async (req, res) => {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    const collection = await db.collection("users");
     const newUser = await collection.insertOne(user);
     res.status(201).send({
       data: newUser,
@@ -34,7 +43,7 @@ authRouter.post("/signup", async (req, res) => {
     res.status(500).send({
       data: {},
       success: false,
-      message: { error: "User data create error", errorMessage: err.message },
+      message: err.message || "User data create error",
     });
   }
 });
