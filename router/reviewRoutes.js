@@ -78,29 +78,20 @@ reviewRoutes.get("/", async (req, res) => {
 
 reviewRoutes.get("/search", async (req, res) => {
   try {
-    const search = req.query.search?.trim();
-    
-    if (!search) {
-      return res.status(400).send({
-        success: false,
-        message: "Search query is required",
-        data: [],
-      });
-    }
-
+    const search = req.query.search?.trim() || "";
     const collection = db.collection("reviews");
     
-    // const reviews = await collection
-    //   .find({ $text: { $search: search } }, { score: { $meta: "textScore" } })
-    //   .sort({ score: { $meta: "textScore" } })
-    //   .toArray();
+    let query = {};
+    if (search) {
+      query = {
+        $or: [
+          { foodName: { $regex: search, $options: "i" } },
+          { tags: { $regex: search, $options: "i" } },
+        ],
+      };
+    }
 
-    const reviews = await collection.find({
-      $or: [
-        { foodName: { $regex: search, $options: "i" } },
-        { tags: { $regex: search, $options: "i" } },
-      ],
-    }).toArray();
+    const reviews = await collection.find(query).toArray();
 
     res.status(200).send({
       success: true,
